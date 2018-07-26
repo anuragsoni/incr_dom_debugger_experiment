@@ -64,4 +64,4 @@ let view (m: Model.t Incr.t) ~inject =
         Node.div [] [button_minus; Node.text (Int.to_string value); button_plus]
     )
   in
-  Node.body [] (add_new_counter_button :: Map.data elements)
+  Node.div [] (add_new_counter_button :: Map.data elements)

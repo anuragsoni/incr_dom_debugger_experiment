@@ -22,7 +22,12 @@ struct
 
   let update_visibility = M.update_visibility
 
-  let view = M.view
+  let view (m: Model.t Incr.t) ~inject =
+    let open Incr.Let_syntax in
+    let open Vdom in
+    let dummy = Node.div [] [Node.text "Hello"] in
+    let%map child = M.view m ~inject >>| Core_kernel.Fn.id in
+    Node.body [] [dummy; child]
 
   let on_startup = M.on_startup
 
