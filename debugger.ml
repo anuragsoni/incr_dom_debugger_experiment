@@ -1,11 +1,20 @@
+open Core_kernel
 open Incr_dom
 
 module type Debuggable = sig
   include App_intf.S_simple
+
+  val serialize_model : Model.t -> string
+
+  val serialize_action : Action.t -> string
+
+  val initial_model : Model.t
 end
 
-module Make (M : App_intf.S_simple) :
-  Debuggable with type Model.t = M.Model.t and type Action.t = M.Action.t =
+module Make (M : Debuggable) :
+  App_intf.S_simple
+  with type Model.t = M.Model.t
+   and type Action.t = M.Action.t =
 struct
   module Model = M.Model
   module Action = M.Action
@@ -25,9 +34,19 @@ struct
   let view (m: Model.t Incr.t) ~inject =
     let open Incr.Let_syntax in
     let open Vdom in
-    let dummy = Node.div [] [Node.text "Hello"] in
+    let render_history =
+      Node.div []
+        [ Node.ul []
+            (List.map
+               ~f:(fun (action, model) ->
+                 Node.text
+                   (Printf.sprintf "Action: %s - Current Model: %s"
+                      (M.serialize_action action)
+                      (M.serialize_model model)) )
+               !history) ]
+    in
     let%map child = M.view m ~inject >>| Core_kernel.Fn.id in
-    Node.body [] [dummy; child]
+    Node.body [] [render_history; child]
 
   let on_startup = M.on_startup
 

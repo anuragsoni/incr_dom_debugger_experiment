@@ -21,12 +21,16 @@ end
 
 let initial_model = Model.Fields.create ~counters:(Int.Map.singleton 0 13)
 
+let serialize_model m = m |> Model.sexp_of_t |> Sexp.to_string
+
 module Action = struct
   type t = New_counter | Update of int * int (* pos, diff *)
   [@@deriving sexp]
 
   let should_log _ = true
 end
+
+let serialize_action a = a |> Action.sexp_of_t |> Sexp.to_string
 
 module State = struct
   type t = unit
