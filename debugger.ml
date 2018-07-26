@@ -1,16 +1,24 @@
 open Incr_dom
 
+module type Debuggable = sig
+  include App_intf.S_simple
+end
+
 module Make (M : App_intf.S_simple) :
-  App_intf.S_simple
-  with type Model.t = M.Model.t
-   and type Action.t = M.Action.t =
+  Debuggable with type Model.t = M.Model.t and type Action.t = M.Action.t =
 struct
   module Model = M.Model
-
   module Action = M.Action
   module State = M.State
 
-  let apply_action = M.apply_action
+  let history : (Action.t * Model.t) list ref = ref []
+
+  let push_to_history action model = history := (action, model) :: !history
+
+  let apply_action action model state =
+    let updated_model = M.apply_action action model state in
+    push_to_history action updated_model ;
+    updated_model
 
   let update_visibility = M.update_visibility
 

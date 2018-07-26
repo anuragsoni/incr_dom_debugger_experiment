@@ -19,6 +19,8 @@ module Model = struct
   let cutoff t1 t2 = compare t1 t2 = 0
 end
 
+let initial_model = Model.Fields.create ~counters:(Int.Map.singleton 0 13)
+
 module Action = struct
   type t = New_counter | Update of int * int (* pos, diff *)
   [@@deriving sexp]

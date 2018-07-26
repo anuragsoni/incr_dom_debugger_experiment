@@ -7,4 +7,4 @@ let () =
   Start_app.simple
     (module Wrapped)
     ~initial_model:
-      (Wrapped.Model.Fields.create ~counters:(Int.Map.singleton 0 13))
+      (Webby.initial_model)
