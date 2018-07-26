@@ -3,7 +3,8 @@ open! Incr_dom
 open! Js_of_ocaml
 
 let () =
+  let module Wrapped = Debugger.Make (Webby) in
   Start_app.simple
-    (module Webby)
+    (module Wrapped)
     ~initial_model:
-      (Webby.Model.Fields.create ~counters:(Int.Map.singleton 0 13))
+      (Wrapped.Model.Fields.create ~counters:(Int.Map.singleton 0 13))
