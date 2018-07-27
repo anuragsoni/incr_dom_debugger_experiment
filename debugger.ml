@@ -34,19 +34,20 @@ struct
   let view (m: Model.t Incr.t) ~inject =
     let open Incr.Let_syntax in
     let open Vdom in
-    let render_history =
+    let render_history () =
       Node.div []
         [ Node.ul []
             (List.map
                ~f:(fun (action, model) ->
-                 Node.text
-                   (Printf.sprintf "Action: %s - Current Model: %s"
-                      (M.serialize_action action)
-                      (M.serialize_model model)) )
+                 Node.li []
+                   [ Node.text
+                       (Printf.sprintf "Action: %s - Current Model: %s"
+                          (M.serialize_action action)
+                          (M.serialize_model model)) ] )
                !history) ]
     in
     let%map child = M.view m ~inject >>| Core_kernel.Fn.id in
-    Node.body [] [render_history; child]
+    Node.body [] [render_history (); child]
 
   let on_startup = M.on_startup
 
