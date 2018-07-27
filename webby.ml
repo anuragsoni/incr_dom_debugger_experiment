@@ -23,6 +23,8 @@ let initial_model = Model.Fields.create ~counters:(Int.Map.singleton 0 13)
 
 let serialize_model m = m |> Model.sexp_of_t |> Sexp.to_string
 
+let deserialize_model s = s |> Sexp.of_string |> Model.t_of_sexp
+
 module Action = struct
   type t = New_counter | Update of int * int (* pos, diff *)
   [@@deriving sexp]
